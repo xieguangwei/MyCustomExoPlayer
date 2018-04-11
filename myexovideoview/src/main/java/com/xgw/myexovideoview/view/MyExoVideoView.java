@@ -262,6 +262,20 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
         Glide.with(getContext())
                 .load(playUrl)
                 .into(coverIv);
+
+        if (mediaDataSourceFactory == null || player == null) {
+            releasePlayer();
+            //从MediaSource中选出media提供给可用的Render S来渲染,在创建播放器时被注入
+            TrackSelection.Factory videoTrackSelectionFactor = new AdaptiveTrackSelection.Factory(bandwidthMeter);
+            trackSelector = new DefaultTrackSelector(videoTrackSelectionFactor);
+            //Create the player
+            player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
+
+            player.addListener(eventListener);
+            player.addVideoListener(videoListener);
+            player.setVideoTextureView(textureView);
+        }
+
         //Produces Extractor instances for parsing the media data 萃取剂
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
         MediaSource videoSource = new ExtractorMediaSource(Uri.parse(playUrl),
@@ -284,6 +298,7 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
             onErrorHandle();
             return;
         }
+        releasePlayer();
         //从MediaSource中选出media提供给可用的Render S来渲染,在创建播放器时被注入
         TrackSelection.Factory videoTrackSelectionFactor = new AdaptiveTrackSelection.Factory(bandwidthMeter);
         trackSelector = new DefaultTrackSelector(videoTrackSelectionFactor);
@@ -612,6 +627,14 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
                 player.seekTo(player.getDuration());
             }
         }
+    }
+
+    /**
+     * 获取动前进度
+     * @return
+     */
+    public long getCurrentProgress() {
+        return player == null ? 0 : player.getCurrentPosition();
     }
 
     @Override
