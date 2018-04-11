@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.xgw.myexovideoview.videogesture.VideoGestureLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vgl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <com.xgw.myexovideoview.view.MyTextureView
+        android:id="@+id/texture_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true" />
+
+    <include layout="@layout/video_bottom_progress_layout" />
+
+    <com.xgw.myexovideoview.view.MyCoverImageView
+        android:id="@+id/cover_iv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:scaleType="fitXY" />
+
+    <include layout="@layout/video_loading_layout" />
+
+    <RelativeLayout
+        android:id="@+id/control_rl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/btnPlay"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/play_start" />
+
+    </RelativeLayout>
+
+    <include layout="@layout/video_reload_layout" />
+
+    <com.xgw.myexovideoview.videogesture.ShowControlLayout
+        android:id="@+id/scl"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"></com.xgw.myexovideoview.videogesture.ShowControlLayout>
+</com.xgw.myexovideoview.videogesture.VideoGestureLayout>
