@@ -7,9 +7,7 @@ allprojects {
     repositories {
         ...
         maven { url 'https://jitpack.io' }
-        maven {
-            url "https://maven.google.com"
-        }
+        maven { url "https://maven.google.com" }
     }
 }
 ```

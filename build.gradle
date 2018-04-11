@@ -16,9 +16,8 @@ allprojects {
     repositories {
         jcenter()
         maven { url 'https://jitpack.io' }
-        maven {
-            url "https://maven.google.com"
-        }
+        //for exo player
+        maven { url 'https://maven.google.com' }
     }
 }
 
