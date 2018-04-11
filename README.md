@@ -14,7 +14,7 @@ allprojects {
 ### Step 2. Add the dependency
 ```
 dependencies {
-    compile 'com.github.xieguangwei:MyCustomExoPlayer:1.2'
+    compile 'com.github.xieguangwei:MyCustomExoPlayer:1.3'
 }
 ```
 ### 感兴趣的可以下载demo看下

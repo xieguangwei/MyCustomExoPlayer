@@ -254,7 +254,7 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
      * @param playUrl
      */
     public void playSpecifiedVideo(String playUrl, long currentPosition) {
-        if (TextUtils.isEmpty(playUrl) || mediaDataSourceFactory == null || player == null) {
+        if (TextUtils.isEmpty(playUrl)) {
             onErrorHandle();
             return;
         }
