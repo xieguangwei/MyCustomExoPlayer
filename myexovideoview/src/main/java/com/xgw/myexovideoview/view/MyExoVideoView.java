@@ -2,14 +2,12 @@ package com.xgw.myexovideoview.view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -39,18 +37,16 @@ import com.google.android.exoplayer2.util.Util;
 import com.xgw.myexovideoview.R;
 import com.xgw.myexovideoview.constant.PlayMode;
 import com.xgw.myexovideoview.constant.ScreenStatus;
-import com.xgw.myexovideoview.entity.VideoBean;
 import com.xgw.myexovideoview.listener.MyVideoEndListener;
+import com.xgw.myexovideoview.listener.MyVideoSizeListener;
+import com.xgw.myexovideoview.listener.MyVideoStateListener;
 import com.xgw.myexovideoview.listener.MyVideoErrorListener;
 import com.xgw.myexovideoview.listener.MyVideoScreenListener;
 import com.xgw.myexovideoview.listener.SimpleEventListener;
 import com.xgw.myexovideoview.utils.MyVideoControlManager;
 import com.xgw.myexovideoview.utils.PlayModeUtils;
-import com.xgw.myexovideoview.utils.SPUtils;
 import com.xgw.myexovideoview.videogesture.ShowControlLayout;
 import com.xgw.myexovideoview.videogesture.VideoGestureLayout;
-
-import java.util.List;
 
 /**
  * Created by XieGuangwei on 2018/3/30.
@@ -78,7 +74,6 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
     private ImageView playModeIv;//播放模式按钮
 
 
-
     private LinearLayout playProgressLl;//底部进度布局
 
 
@@ -88,8 +83,10 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
     private DefaultBandwidthMeter bandwidthMeter;
 
     private String playUrl;//播放url
-    private MyVideoEndListener mEndListener;//播放完成监听
+    private MyVideoStateListener mStateListener;//播放状态监听
     private MyVideoErrorListener mErrorListener;//播放出错监听
+    private MyVideoEndListener mEndListener;//播放完成监听
+    private MyVideoSizeListener mSizeListener;//播放器大小变化监听
 
     private boolean isFinishPlay;//是否完成播放
     private boolean isPlayError;//是否播放出错
@@ -134,7 +131,6 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
             }
         }
     };
-
 
 
     public MyExoVideoView(Context context) {
@@ -339,6 +335,9 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
             textureView.adaptVideoSize(width, height);
             coverIv.adaptVideoSize(width, height);
+            if (mSizeListener != null) {
+                mSizeListener.onVideoSizeChanged(width, height);
+            }
         }
 
         @Override
@@ -362,14 +361,23 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
             switch (playbackState) {
                 case Player.STATE_IDLE:
                     //播放器还没准备好
+                    if (mStateListener != null) {
+                        mStateListener.onIdle();
+                    }
                     break;
                 case Player.STATE_BUFFERING:
                     //缓冲，显示菊花
+                    if (mStateListener != null) {
+                        mStateListener.onBuffering();
+                    }
                     showLoadingRl();
                     dismissControlRl();
                     break;
                 case Player.STATE_READY:
                     //准备好播放，隐藏菊花
+                    if (mStateListener != null) {
+                        mStateListener.onReady();
+                    }
                     onPlayingHandle();
                     break;
                 case Player.STATE_ENDED:
@@ -441,8 +449,26 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
      *
      * @param listener
      */
+    public void setMyVideoStateListener(MyVideoStateListener listener) {
+        this.mStateListener = listener;
+    }
+
+    /**
+     * 设置播放完成监听
+     *
+     * @param listener
+     */
     public void setMyVideoEndListener(MyVideoEndListener listener) {
         this.mEndListener = listener;
+    }
+
+    /**
+     * 设置播放器大小变化监听
+     *
+     * @param listener
+     */
+    public void setMyVideoSizeListener(MyVideoSizeListener listener) {
+        this.mSizeListener = listener;
     }
 
     /**
@@ -660,7 +686,6 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
     }
 
 
-
     /**
      * 设置全屏、退出全屏后的参数、状态
      *
@@ -691,13 +716,13 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
         if (fullScreenIv == null) {
             return;
         }
-        fullScreenIv.setVisibility(shouldShowFullScreen?VISIBLE:GONE);
+        fullScreenIv.setVisibility(shouldShowFullScreen ? VISIBLE : GONE);
     }
 
     public void shouldShowPlayModeIv(boolean shouldShowPlayMode) {
         if (playModeIv == null) {
             return;
         }
-        playModeIv.setVisibility(shouldShowPlayMode?VISIBLE:GONE);
+        playModeIv.setVisibility(shouldShowPlayMode ? VISIBLE : GONE);
     }
 }
