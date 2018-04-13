@@ -17,4 +17,4 @@ dependencies {
     compile 'com.github.xieguangwei:MyCustomExoPlayer:1.3'
 }
 ```
-### 感兴趣的可以下载demo看下
+### 感兴趣的可以下载demo看下，[同款的基于MediaPlayer封装的播放器>>>](https://github.com/xieguangwei/MyCustomMediaPlayer)
