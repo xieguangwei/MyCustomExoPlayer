@@ -83,6 +83,7 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
     private DefaultBandwidthMeter bandwidthMeter;
 
     private String playUrl;//播放url
+    private String coverUrl;//封面url
     private MyVideoStateListener mStateListener;//播放状态监听
     private MyVideoErrorListener mErrorListener;//播放出错监听
     private MyVideoEndListener mEndListener;//播放完成监听
@@ -240,27 +241,40 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
      * 设置播放列表
      *
      * @param url
+     * @param coverUrl
+     */
+    public void initPlayer(String url, String coverUrl) {
+        this.playUrl = url;
+        this.coverUrl = TextUtils.isEmpty(coverUrl) ? url : coverUrl;
+        Glide.with(getContext())
+                .load(coverUrl)
+                .into(coverIv);
+    }
+
+    /**
+     * 设置播放列表
+     *
+     * @param url
      */
     public void initPlayer(String url) {
-        this.playUrl = url;
-        Glide.with(getContext())
-                .load(url)
-                .into(coverIv);
+        initPlayer(url, null);
     }
 
     /**
      * 播放指定位置视频
      *
      * @param playUrl
+     * @param coverUrl
      */
-    public void playSpecifiedVideo(String playUrl, long currentPosition) {
+    public void playSpecifiedVideo(String playUrl, String coverUrl, long currentPosition) {
         if (TextUtils.isEmpty(playUrl)) {
             onErrorHandle();
             return;
         }
         this.playUrl = playUrl;
+        this.coverUrl = TextUtils.isEmpty(coverUrl) ? playUrl : coverUrl;
         Glide.with(getContext())
-                .load(playUrl)
+                .load(coverUrl)
                 .into(coverIv);
 
         if (mediaDataSourceFactory == null || player == null) {
@@ -290,6 +304,15 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
     }
 
     /**
+     * 播放指定位置视频
+     *
+     * @param playUrl
+     */
+    public void playSpecifiedVideo(String playUrl, long currentPosition) {
+        playSpecifiedVideo(playUrl, null, currentPosition);
+    }
+
+    /**
      * 初始化播放器
      */
     private void initializePlayer() {
@@ -306,7 +329,7 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
         player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
 
 
-        playSpecifiedVideo(playUrl, currentPosition);
+        playSpecifiedVideo(playUrl, coverUrl, currentPosition);
 
         player.addListener(eventListener);
         player.addVideoListener(videoListener);
@@ -566,7 +589,7 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
                 return true;
             } else {
                 if (isPlayError || isFinishPlay) {
-                    playSpecifiedVideo(playUrl, 0);
+                    playSpecifiedVideo(playUrl, coverUrl, 0);
                 } else {
                     player.setPlayWhenReady(true);
                 }
@@ -583,7 +606,7 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
     public void playOrPause() {
         if (player != null) {
             if (isFinishPlay || isPlayError) {
-                playSpecifiedVideo(playUrl, 0);
+                playSpecifiedVideo(playUrl, coverUrl, 0);
             } else {
                 if (player.getPlayWhenReady()) {
                     onPauseHandle();
@@ -631,6 +654,7 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
 
     /**
      * 获取动前进度
+     *
      * @return
      */
     public long getCurrentProgress() {
@@ -643,7 +667,7 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
         if (id == btnPlay.getId()) {
             playOrPause();
         } else if (id == reloadRl.getId()) {
-            playSpecifiedVideo(playUrl, currentPosition);
+            playSpecifiedVideo(playUrl, coverUrl, currentPosition);
         } else if (id == fullScreenIv.getId()) {
             if (mScreenListener != null) {
                 if (screenStatus == ScreenStatus.SCREEN_STATUS_FULL) {
@@ -725,7 +749,7 @@ public class MyExoVideoView extends RelativeLayout implements View.OnClickListen
         }
         if (player != null) {
             if (isFinishPlay || isPlayError) {
-                playSpecifiedVideo(playUrl, 0);
+                playSpecifiedVideo(playUrl, coverUrl, 0);
             } else {
                 if (!player.getPlayWhenReady()) {
                     onPlayingHandle();
