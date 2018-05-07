@@ -14,7 +14,7 @@ allprojects {
 ### Step 2. Add the dependency
 ```
 dependencies {
-    compile 'com.github.xieguangwei:MyCustomExoPlayer:1.3'
+    compile 'com.github.xieguangwei:MyCustomExoPlayer:1.4'
 }
 ```
 ### 感兴趣的可以下载demo看下，[同款的基于MediaPlayer封装的播放器>>>](https://github.com/xieguangwei/MyCustomMediaPlayer)
